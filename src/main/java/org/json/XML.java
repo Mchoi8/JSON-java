@@ -734,6 +734,50 @@ public class XML {
     public static String toString(final Object object, final String tagName) {
         return toString(object, tagName, XMLParserConfiguration.ORIGINAL);
     }
+	
+	
+	
+	//This is part of Milestone 2 Tasks
+	
+    /*
+    which does, inside the library, the same thing that task 2 of milestone 1 did in client code, 
+    before writing to disk. Being this done inside the library, you should be able to do it more efficiently. 
+    Specifically, you shouldn't need to read the entire XML file, as you can stop parsing it as soon as you find the object in question.
+    
+    Thoughts: 
+    
+    **/
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+	    
+	    
+    }
+	
+	
+
+	
+	
+	
+     /*
+     which does, inside the library, the same thing that task 5 of milestone 1 did in client code, before writing to disk. 
+     Are there any possible performance gains from doing this inside the library? If so, implement them in your version of the library.
+     
+     Thoughts: 
+     
+     **/
+     public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
+	     
+	
+		
+     }
+	
+	
+	
+	
+	
+	
+
+	
+	
 
     /**
      * Convert a JSONObject into a well-formed, element-normal XML string.
