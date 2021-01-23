@@ -748,10 +748,12 @@ public class XML {
     
     **/
     public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+
+	    JsonStructure jsonStruct = reader.read();
+	    JSONObject object = (JSONObject) path.getValue(jsonStruct);
 	    
-	    
+	    return object;
     }
-	
 	
 
 	
@@ -766,7 +768,12 @@ public class XML {
      **/
      public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
 	     
-	
+	    JsonStructure jsonStruct = reader.read();
+	    JSONObject object = (JSONObject) path.getValue(jsonStruct);
+	    
+	     
+	     
+	    return object;
 		
      }
 	
