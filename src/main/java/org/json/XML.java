@@ -737,9 +737,13 @@ public class XML {
 	
 	
 	
-	//This is part of Milestone 2 Tasks
-	
+    //This is part of Milestone 2 Tasks
+    // Task 1
     /*
+    
+    - Minimal level of low level code is needed to work on library code
+    
+    
     which does, inside the library, the same thing that task 2 of milestone 1 did in client code, 
     before writing to disk. Being this done inside the library, you should be able to do it more efficiently. 
     Specifically, you shouldn't need to read the entire XML file, as you can stop parsing it as soon as you find the object in question.
@@ -749,12 +753,23 @@ public class XML {
     **/
     public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
 
+	    
+//         JSONObject jo = new JSONObject();
+//         XMLTokener x = new XMLTokener(reader);
+//         while (x.more()) {
+//             x.skipPast("<");
+//             if(x.more()) {
+//                 parse(x, jo, null, config);
+//             }
+//         }
+//         return jo;
+	    
 	    JsonStructure jsonStruct = reader.read();
 	    JSONObject object = (JSONObject) path.getValue(jsonStruct);
 	    
 	    return object;
     }
-	
+	3
 
 	
 	
@@ -762,6 +777,8 @@ public class XML {
      /*
      which does, inside the library, the same thing that task 5 of milestone 1 did in client code, before writing to disk. 
      Are there any possible performance gains from doing this inside the library? If so, implement them in your version of the library.
+     
+     Task 2
      
      Thoughts: 
      
