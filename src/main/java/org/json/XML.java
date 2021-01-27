@@ -1,5 +1,16 @@
 package org.json;
 
+import java.util.*;
+
+import javax.json.Json;
+import javax.json.JsonNumber;
+import javax.json.JsonObject;
+import javax.json.JsonPointer;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 /*
 Copyright (c) 2015 JSON.org
 
@@ -23,9 +34,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+import java.io.*;
+import java.nio.file.Files;
 
-import java.io.Reader;
-import java.io.StringReader;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -75,6 +97,8 @@ public class XML {
     public static final String NULL_ATTR = "xsi:nil";
 
     public static final String TYPE_ATTR = "xsi:type";
+    
+    public static JSONObject jsonObjectParse = new JSONObject();
 
     /**
      * Creates an iterator for navigating Code Points in a string instead of
@@ -736,6 +760,82 @@ public class XML {
     }
 	
 	
+    
+    
+    
+    
+    public static JSONObject parsingNewObj(JSONObject jsonObj, String path, JSONObject replace_obj) {
+    	
+    	Iterator<String> keys = jsonObj.keys();
+
+    	while(keys.hasNext()) {
+    	    String key = keys.next();
+    	    if (jsonObj.get(key) instanceof JSONObject) {
+    	    	JSONObject obj = (JSONObject) jsonObj.get(key);
+
+    	    	if( key.equals(path) ) {    	
+    	    		jsonObj.put(key, replace_obj);
+    	    		
+    	    	}
+    	    	parsingNewObj(obj, path, replace_obj);   	    	
+    	    } 
+    	}
+    	
+    	return jsonObj;
+    	
+    }
+    
+    
+    
+    
+    
+    
+    public static JSONObject xmltoJson(Reader reader) throws IOException {
+
+    	BufferedReader br = new BufferedReader(reader);
+    	String line;
+    	StringBuilder sb = new StringBuilder();
+
+    	while((line=br.readLine())!= null){
+    	    sb.append(line.trim());
+    	}
+    	    	
+    	JSONObject jsonObj = XML.toJSONObject(sb.toString());
+    	
+    	return jsonObj;
+    	
+    }
+
+	
+    public static JSONObject parsing(JSONObject jsonObj, String path) {
+    	
+    	Iterator<String> keys = jsonObj.keys();
+
+    	while(keys.hasNext()) {
+    	    String key = keys.next();
+    	    if (jsonObj.get(key) instanceof JSONObject) {
+    	    	JSONObject obj = (JSONObject) jsonObj.get(key);
+
+    	    	if( key.equals(path) ) {
+    	    		jsonObjectParse = obj;
+
+    	    	}
+    	    	
+    	    	parsing(obj, path);
+    	    	
+    	    } 
+    	}
+    	return jsonObjectParse;
+    	
+    }
+	
+    
+    
+    
+    
+    
+    
+    
 	
     //This is part of Milestone 2 Tasks
     // Task 1
@@ -751,28 +851,23 @@ public class XML {
     Thoughts: 
     
     **/
-    public static JSONObject toJSONObject(Reader reader, JSONPointer path) {
+    public static JSONObject toJSONObject(Reader reader, JSONPointer path) throws IOException {
 
-	    
-//         JSONObject jo = new JSONObject();
-//         XMLTokener x = new XMLTokener(reader);
-//         while (x.more()) {
-//             x.skipPast("<");
-//             if(x.more()) {
-//                 parse(x, jo, null, config);
-//             }
-//         }
-//         return jo;
-	    
-	    JsonStructure jsonStruct = reader.read();
-	    JSONObject object = (JSONObject) path.getValue(jsonStruct);
-	    
-	    return object;
+    	JSONObject jsonObj = xmltoJson(reader);
+    	
+    	String s = path.toString();    	
+    	String[] items = s.split("/");
+    	    	
+    	String last_item = items[items.length - 1];
+    	
+    	JSONObject result = parsing(jsonObj, last_item);
+    	    	
+    	return result;
+    	
     }
-	3
-
 	
-	
+    
+    
 	
      /*
      which does, inside the library, the same thing that task 5 of milestone 1 did in client code, before writing to disk. 
@@ -783,16 +878,21 @@ public class XML {
      Thoughts: 
      
      **/
-     public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) {
+     public static JSONObject toJSONObject(Reader reader, JSONPointer path, JSONObject replacement) throws IOException {
 	     
-	    JsonStructure jsonStruct = reader.read();
-	    JSONObject object = (JSONObject) path.getValue(jsonStruct);
-	    
-	     
-	     
-	    return object;
+     	JSONObject jsonObject = xmltoJson(reader);
+
+    	String s = path.toString();    	
+    	String[] items = s.split("/");
+    	    	
+    	String last_item = items[items.length - 1];
+    	
+    	System.out.println(last_item);
+    	JSONObject result = parsingNewObj(jsonObject, last_item, replacement);
+    	    	
+    	return result;
 		
-     }
+    }
 	
 	
 	
