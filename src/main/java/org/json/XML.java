@@ -897,9 +897,18 @@ public class XML {
 	
 	
 	
+     // Milestone 3 Task
+	
+    static JSONObject toJSONObject(Reader reader, YOURTYPEHERE keyTransformer) {
+	    
+	    
 	
 	
+    }
 
+	
+	
+	
 	
 	
 
