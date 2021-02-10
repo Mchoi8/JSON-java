@@ -54,6 +54,10 @@ import java.math.BigInteger;
 import java.util.Iterator;
 
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+
 /**
  * This provides static methods to convert an XML text into a JSONObject, and to
  * covert a JSONObject into an XML text.
@@ -99,7 +103,9 @@ public class XML {
     public static final String TYPE_ATTR = "xsi:type";
     
     public static JSONObject jsonObjectParse = new JSONObject();
+    public static JSONObject jsonObjectParse1 = new JSONObject();
 
+    
     /**
      * Creates an iterator for navigating Code Points in a string instead of
      * characters. Once Java7 support is dropped, this can be replaced with
@@ -763,27 +769,7 @@ public class XML {
     
     
     
-    
-    public static JSONObject parsingNewObj(JSONObject jsonObj, String path, JSONObject replace_obj) {
-    	
-    	Iterator<String> keys = jsonObj.keys();
-
-    	while(keys.hasNext()) {
-    	    String key = keys.next();
-    	    if (jsonObj.get(key) instanceof JSONObject) {
-    	    	JSONObject obj = (JSONObject) jsonObj.get(key);
-
-    	    	if( key.equals(path) ) {    	
-    	    		jsonObj.put(key, replace_obj);
-    	    		
-    	    	}
-    	    	parsingNewObj(obj, path, replace_obj);   	    	
-    	    } 
-    	}
-    	
-    	return jsonObj;
-    	
-    }
+   
     
     
     
@@ -887,28 +873,84 @@ public class XML {
     	    	
     	String last_item = items[items.length - 1];
     	
-    	System.out.println(last_item);
     	JSONObject result = parsingNewObj(jsonObject, last_item, replacement);
     	    	
     	return result;
 		
     }
 	
-	
-	
-	
-     // Milestone 3 Task
-	
-    static JSONObject toJSONObject(Reader reader, YOURTYPEHERE keyTransformer) {
-	    
-	    
-	
-	
-    }
+     
+     public static JSONObject parsingNewObj(JSONObject jsonObj, String path, JSONObject replace_obj) {
+     	
+     	Iterator<String> keys = jsonObj.keys();
 
+     	while(keys.hasNext()) {
+     	    String key = keys.next();
+     	    if (jsonObj.get(key) instanceof JSONObject) {
+     	    	JSONObject obj = (JSONObject) jsonObj.get(key);
+
+     	    	if( key.equals(path) ) {    	
+     	    		jsonObj.put(key, replace_obj);
+     	    		
+     	    	}
+     	    	parsingNewObj(obj, path, replace_obj);   	    	
+     	    } 
+     	}
+     	
+     	return jsonObj;
+     	
+     }
+     
+     
+    
+     
+     
+     // Milestone 3 Task 	
+     public static JSONObject addParser(JSONObject jsonObject, JSONObject resultCopy, Function<String, String> keyTransformer) {      	
+      	Iterator<String> keys = jsonObject.keys();
+
+      	while(keys.hasNext()) {
+      	    String key = keys.next();
+      	    if (jsonObject.get(key) instanceof JSONObject) {
+      	    	
+      	    	JSONObject object = (JSONObject) jsonObject.get(key);
+      	    	
+      	    	//Call the Function to get the transformed string      	    	
+      	    	String key_transform = keyTransformer.apply(key);
+      	    	
+      	    	resultCopy.put(key_transform, object);
+      	    	    	    	
+      	    	addParser(object, resultCopy, keyTransformer);   	    	
+      	    } 
+      	}
+
+      	return resultCopy;
+      }
+ 	
+     
+     
+     public static Function<String, String> keyTransform = (str) -> {
+    	String prefix = "swe262_";
+    	return prefix + str; 
+     };
+     
+     
+     
+     public static JSONObject toJSONObject(Reader reader, Function<String, String> keyTransformer) throws IOException {
+    	
+    	JSONObject jsonObject1 = xmltoJson(reader);
+    	
+    	JSONObject resultCopy = new JSONObject();
+    	JSONObject resultObj = addParser(jsonObject1, resultCopy, keyTransformer);
+    	
+    	return resultObj;
+	
+     }
 	
 	
 	
+	
+
 	
 	
 
