@@ -216,11 +216,11 @@ public class XMLTest262P {
             JSONObject finalJsonObject = XML.toJSONObject(xmlToStr);
             JSONObject expectedJsonObject = new JSONObject(expectedStr);
 	   	
-            List<Entry<String, Object>> expectedr = expectedJsonObject.toStream().collect(Collectors.toList());
+            List<Entry<String, Object>> expectedr = expectedJsonObject.toStream().flatMap(num -> Stream.of(num)).collect(Collectors.toList());
 
             expectedJsonObject.toStream().flatMap(num -> Stream.of(num)).forEach(w -> System.out.println(w));
             
-            List<Entry<String, Object>> r = finalJsonObject.toStream().collect(Collectors.toList());
+            List<Entry<String, Object>> r = finalJsonObject.toStream().flatMap(num -> Stream.of(num)).collect(Collectors.toList());
 	   	
         System.out.println(expectedr.get(0).toString());
 	   	assertEquals(expectedr.get(0).toString(), r.get(0).toString());
