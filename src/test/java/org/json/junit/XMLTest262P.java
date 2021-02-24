@@ -6,7 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +21,26 @@ import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
 public class XMLTest262P {
+	
+	public static String xml= "<?xml version=\"1.0\" ?><root><test       attribute=\"text1\">javatpoint</test><test attribute=\"text2\">JTP</test></root>";
 
+	
+	
+    /**
+     * Convenience method, given an input string and expected result,
+     * convert to JSONObject and compare actual to expected result.
+     * @param xmlStr the string to parse
+     * @param expectedStr the expected JSON string
+     */
+    private void compareStringToJSONObject(String xmlStr, String expectedStr) {
+        JSONObject jsonObject = XML.toJSONObject(xmlStr);
+        JSONObject expectedJsonObject = new JSONObject(expectedStr);
+        Util.compareActualVsExpectedJsonObjects(jsonObject,expectedJsonObject);
+    }
+	
+	
+	
+	
 	@Test
 	public void taskTwoTest() throws IOException, ParseException {
 		
@@ -26,8 +49,9 @@ public class XMLTest262P {
 		JSONPointer jsonpointer = new JSONPointer("/nutrition/daily-values");
 		
 	    JSONObject object = XML.toJSONObject(filereader, jsonpointer);
-
-	    //System.out.println(object);
+	    
+        
+	    System.out.println(object);
 	    
 	    //final result {"carb":{"units":"g","content":300},"sodium":{"units":"mg","content":2400},"fiber":{"units":"g","content":25},"total-fat":{"units":"g","content":65},"protein":{"units":"g","content":50},"cholesterol":{"units":"mg","content":300},"saturated-fat":{"units":"g","content":20}}
 
@@ -49,14 +73,14 @@ public class XMLTest262P {
 		
 	    JSONObject newobject = XML.toJSONObject(filereader, jsonpointer, obj);
 
-	   	//System.out.println(newobject);
+	   	System.out.println(newobject);
 	    // final result {"PLAY":{"testing1":"tester"}}
 		
 	}
 	
 	
 	@Test
-	public void mileston3Test1() throws IOException, ParseException {
+	public void milestoneTest1() throws IOException, ParseException {
 
 		FileReader filereader1 = new FileReader("C:\\Users\\Matthew\\Google Drive\\UCI MSWE\\SWE262P\\JSON-java-master\\src\\main\\java\\org\\json\\nutrition.xml");
 				
@@ -69,7 +93,7 @@ public class XMLTest262P {
 	}
 	
 	@Test
-	public void mileston3Test2() throws IOException, ParseException {
+	public void milestoneTest2() throws IOException, ParseException {
 		FileReader filereader1 = new FileReader("C:\\Users\\Matthew\\Google Drive\\UCI MSWE\\SWE262P\\JSON-java-master\\src\\main\\java\\org\\json\\hamlet.xml");
 								
 	    JSONObject newobject1 = XML.toJSONObject(filereader1, XML.keyTransform);
@@ -79,15 +103,128 @@ public class XMLTest262P {
 	
 	
 	@Test
-	public void mileston3Test3() throws IOException, ParseException {
+	public void milestoneTest3() throws IOException, ParseException {
 		FileReader filereader1 = new FileReader("C:\\Users\\Matthew\\Google Drive\\UCI MSWE\\SWE262P\\JSON-java-master\\src\\main\\java\\org\\json\\books.xml");
 								
 	    JSONObject newobject1 = XML.toJSONObject(filereader1, XML.keyTransform);
+	   
         
-	   	System.out.println("books result " + newobject1);
+	   	System.out.println("books result!!!!! " + newobject1);
 	}
 	
 	
+	//Milestone 4 Test Cases
+	
+	@Test
+	public void streamTest1() throws Exception {
+		//Testing if the toStream() works and nodes are printed out 
+	   	
+        String xmlStr = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""+
+                "   xsi:noNamespaceSchemaLocation='test.xsd'>\n"+
+                "   <address>\n"+
+                "       <name>[CDATA[Joe &amp; T &gt; e &lt; s &quot; t &apos; er]]</name>\n"+
+                "       <street>Baker street 5</street>\n"+
+                "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n"+
+                "   </address>\n"+
+                "</addresses>";
 
+        String expectedStr = 
+                "{\"addresses\":{\"address\":{\"street\":\"Baker street 5\","+
+                "\"name\":\"[CDATA[Joe & T > e < s \\\" t \\\' er]]\","+
+                "\"ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n"+
+                "},\"xsi:noNamespaceSchemaLocation\":"+
+                "\"test.xsd\",\"xmlns:xsi\":\"http://www.w3.org/2001/"+
+                "XMLSchema-instance\"}}";
+            
+            
+            JSONObject jsonObject = XML.toJSONObject(xmlStr);
+            String xmlToStr = XML.toString(jsonObject);
+            JSONObject finalJsonObject = XML.toJSONObject(xmlToStr);
+            JSONObject expectedJsonObject = new JSONObject(expectedStr);
+	   	
+            expectedJsonObject.toStream().forEach(w -> System.out.println(w));
+            
+	}
+	
+	
+	@Test
+	public void streamTest2() throws Exception {
+		//Testing if the toStream() works and nodes are collected into a list and printed out
+
+        String xmlStr = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""+
+                "   xsi:noNamespaceSchemaLocation='test.xsd'>\n"+
+                "   <address>\n"+
+                "       <name>[CDATA[Joe &amp; T &gt; e &lt; s &quot; t &apos; er]]</name>\n"+
+                "       <street>Baker street 5</street>\n"+
+                "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n"+
+                "   </address>\n"+
+                "</addresses>";
+
+        String expectedStr = 
+                "{\"addresses\":{\"address\":{\"street\":\"Baker street 5\","+
+                "\"name\":\"[CDATA[Joe & T > e < s \\\" t \\\' er]]\","+
+                "\"ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n"+
+                "},\"xsi:noNamespaceSchemaLocation\":"+
+                "\"test.xsd\",\"xmlns:xsi\":\"http://www.w3.org/2001/"+
+                "XMLSchema-instance\"}}";
+            
+            
+            JSONObject jsonObject = XML.toJSONObject(xmlStr);
+            String xmlToStr = XML.toString(jsonObject);
+            JSONObject finalJsonObject = XML.toJSONObject(xmlToStr);
+            JSONObject expectedJsonObject = new JSONObject(expectedStr);
+	   	
+            List<Entry<String, Object>> expectedr = expectedJsonObject.toStream().collect(Collectors.toList());
+
+            
+            List<Entry<String, Object>> r = finalJsonObject.toStream().collect(Collectors.toList());
+	   	
+        System.out.println(expectedr.get(0).toString());
+	   	assertEquals(expectedr.get(0).toString(), r.get(0).toString());
+	}
+	
+	@Test
+	public void streamTest3() throws Exception {
+		//Testing if the toStream() works and nodes are flatmapped collected into a list and printed out
+
+        String xmlStr = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""+
+                "   xsi:noNamespaceSchemaLocation='test.xsd'>\n"+
+                "   <address>\n"+
+                "       <name>[CDATA[Joe &amp; T &gt; e &lt; s &quot; t &apos; er]]</name>\n"+
+                "       <street>Baker street 5</street>\n"+
+                "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n"+
+                "   </address>\n"+
+                "</addresses>";
+
+        String expectedStr = 
+                "{\"addresses\":{\"address\":{\"street\":\"Baker street 5\","+
+                "\"name\":\"[CDATA[Joe & T > e < s \\\" t \\\' er]]\","+
+                "\"ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n"+
+                "},\"xsi:noNamespaceSchemaLocation\":"+
+                "\"test.xsd\",\"xmlns:xsi\":\"http://www.w3.org/2001/"+
+                "XMLSchema-instance\"}}";
+            
+            
+            JSONObject jsonObject = XML.toJSONObject(xmlStr);
+            String xmlToStr = XML.toString(jsonObject);
+            JSONObject finalJsonObject = XML.toJSONObject(xmlToStr);
+            JSONObject expectedJsonObject = new JSONObject(expectedStr);
+	   	
+            List<Entry<String, Object>> expectedr = expectedJsonObject.toStream().collect(Collectors.toList());
+
+            expectedJsonObject.toStream().flatMap(num -> Stream.of(num)).forEach(w -> System.out.println(w));
+            
+            List<Entry<String, Object>> r = finalJsonObject.toStream().collect(Collectors.toList());
+	   	
+        System.out.println(expectedr.get(0).toString());
+	   	assertEquals(expectedr.get(0).toString(), r.get(0).toString());
+	}
+	
 
 }
