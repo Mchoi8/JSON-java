@@ -46,6 +46,7 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external
@@ -525,6 +526,41 @@ public class JSONObject {
         }
         return this;
     }
+    
+    
+//    public Stream<Map.Entry<String, Object>> toStream() throws JSONException {
+//
+//    	    	
+//    	Stream<Map.Entry<String, Object>> stream = this.map.entrySet().stream();
+//    	System.out.println("toStream()");
+//    	
+//    	System.out.println("this " + this);
+//    	System.out.println(stream);
+//    	
+//        return stream;
+//    }
+//    
+
+    //Stream the JSON Object
+    public Stream<Entry<String, Object>> toStream() throws Exception {
+        return this.map.entrySet().stream();
+    }
+    
+    
+//    public Stream<? extends Object> toStream() throws Exception {
+//        Object value = this.map.entrySet().stream().findFirst().get().getValue();
+//
+//        if (value instanceof JSONObject) {
+//            System.out.println("JSON OBJECT");
+//            return ((JSONObject) value).map.values().stream();
+//        } else if (value instanceof JSONArray) {
+//            System.out.println("JSON ARRAY");
+//            return ((JSONArray) value).myArrayList.stream();
+//        } else {
+//            throw new Exception("NO NO");
+//        }
+//    }
+    
 
     /**
      * Produce a string from a double. The string "null" will be returned if the
