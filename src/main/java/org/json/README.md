@@ -1,14 +1,19 @@
 # Milestone 4
 
-
-
-
+Used the simple solution of streaming the JSONObject as Maps of key values as String and Object.
+  - Tried to create a class as JSON Nodes with key value, and path attributes, but ended up with the simple solution for easier testing.
 
 3 Test Cases for Milestone 4
 
 ```streamTest1()```
+- Testing if the toStream() works and nodes are printed out 
+
 ```streamTest2()```
+- Testing if the toStream() works and nodes are collected into a list and printed out
+
 ```streamTest3()```
+- Testing if the toStream() works and nodes are flatmapped collected into a list and printed out
+
 
 
 
