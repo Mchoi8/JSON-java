@@ -18,6 +18,7 @@
 
 # Milestone 3
 
+## Used the overloaded static method to use the prefix 'swe262_'
 
 3 Test Cases for Milestone 3
 
