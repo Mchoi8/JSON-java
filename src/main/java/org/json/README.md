@@ -3,6 +3,7 @@
 - Added an asynchronous method toJSONObject() that takes in an Exception function callback that uses a class ReaderXML to run a thread and returns a future object as it is running the function of parsing the XML file to a JSONObject. That future object is then called even though the parsing might still be running on a huge xml file.
 
 ```public static Future<JSONObject> toJSONObject(Reader reader, Consumer<JSONObject> func, Consumer<Exception> e) ```
+--
 ```ReaderXML class```
 
 3 Test Cases for Milestone 5
