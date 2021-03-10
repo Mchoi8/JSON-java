@@ -254,7 +254,7 @@ public class XMLTest262P {
         
         FileReader aReader = new FileReader("temp.xml");
         
-        Future<JSONObject> result = XML.toJSONObject(aReader, (JSONObject jo) -> {System.out.println("Done");}, (Exception e) -> {/* something went wrong */});
+        Future<JSONObject> result = XML.toJSONObject(aReader, (Exception e) -> {/* something went wrong */});
         System.out.println(result);
         assertTrue(result instanceof Future);
 	}
@@ -267,7 +267,7 @@ public class XMLTest262P {
         
         FileReader aReader = new FileReader("C:\\Users\\Matthew\\Google Drive\\UCI MSWE\\SWE262P\\JSON-java-master\\src\\main\\java\\org\\json\\books.xml");
         
-        Future<JSONObject> result = XML.toJSONObject(aReader, (JSONObject jo) -> {System.out.println("Done");}, (Exception e) -> {/* something went wrong */});
+        Future<JSONObject> result = XML.toJSONObject(aReader, (Exception e) -> {/* something went wrong */});
         System.out.println(result);
         assertTrue(result instanceof Future);
 	}
@@ -280,7 +280,7 @@ public class XMLTest262P {
         
         FileReader aReader = new FileReader("C:\\Users\\Matthew\\Google Drive\\UCI MSWE\\SWE262P\\JSON-java-master\\src\\main\\java\\org\\json\\nutrition.xml");
         
-        Future<JSONObject> result = XML.toJSONObject(aReader, (JSONObject jo) -> {System.out.println("Done");}, (Exception e) -> {/* something went wrong */});
+        Future<JSONObject> result = XML.toJSONObject(aReader, (Exception e) -> {/* something went wrong */});
         System.out.println(result);
         
         assertTrue(result instanceof Future);
