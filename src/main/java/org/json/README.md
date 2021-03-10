@@ -6,7 +6,7 @@
 
 - ```ReaderXML class```
 
-3 Test Cases for Milestone 5
+- 3 Test Cases for Milestone 5
 
 ```milestone5Test1()```
 - Testing if the toJSONObject() returns a Future<JSONObject> object on a small XML file by checking the type of the return  
@@ -28,7 +28,7 @@ Used the simple solution of streaming the JSONObject as Maps of key values as St
   - Focused on getting the top level elements rather than looking at nested objects.
   - The goal is to help developers in going through JSONObject data through streams and its methods.
 
-3 Test Cases for Milestone 4
+- 3 Test Cases for Milestone 4
 
 ```streamTest1()```
 - Testing if the toStream() works and nodes are printed out 
