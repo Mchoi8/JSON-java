@@ -226,5 +226,66 @@ public class XMLTest262P {
 	   	assertEquals(expectedr.get(0).toString(), r.get(0).toString());
 	}
 	
+	
+	
+	
+	
+	
+	//Milestone 5 Test Cases
+	
+	@Test
+	public void milestone5Test1() throws Exception {
+		//Testing to see if the function returns the appropriate Future object with a very small temp.xml file
+
+        String xmlStr = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+                "<addresses xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""+
+                "   xsi:noNamespaceSchemaLocation='test.xsd'>\n"+
+                "   <address>\n"+
+                "       <name>[CDATA[Joe &amp; T &gt; e &lt; s &quot; t &apos; er]]</name>\n"+
+                "       <street>Baker street 5</street>\n"+
+                "       <ArrayOfNum>1, 2, 3, 4.1, 5.2</ArrayOfNum>\n"+
+                "   </address>\n"+
+                "</addresses>";
+        
+        java.io.FileWriter fw = new java.io.FileWriter("temp.xml");
+        fw.write(xmlStr);
+        fw.close();
+        
+        FileReader aReader = new FileReader("temp.xml");
+        
+        Future<JSONObject> result = XML.toJSONObject(aReader, (JSONObject jo) -> {System.out.println("Done");}, (Exception e) -> {/* something went wrong */});
+        System.out.println(result);
+        assertTrue(result instanceof Future);
+	}
+	
+	
+	@Test
+	public void milestone5Test2() throws Exception {
+		//Testing to see if the function returns the appropriate Future object with a medium-sized books.xml file
+
+        
+        FileReader aReader = new FileReader("C:\\Users\\Matthew\\Google Drive\\UCI MSWE\\SWE262P\\JSON-java-master\\src\\main\\java\\org\\json\\books.xml");
+        
+        Future<JSONObject> result = XML.toJSONObject(aReader, (JSONObject jo) -> {System.out.println("Done");}, (Exception e) -> {/* something went wrong */});
+        System.out.println(result);
+        assertTrue(result instanceof Future);
+	}
+	
+	
+	@Test
+	public void milestone5Test3() throws Exception {
+		//Testing to see if the function returns the appropriate Future object with a large nutritions.xml file
+
+        
+        FileReader aReader = new FileReader("C:\\Users\\Matthew\\Google Drive\\UCI MSWE\\SWE262P\\JSON-java-master\\src\\main\\java\\org\\json\\nutrition.xml");
+        
+        Future<JSONObject> result = XML.toJSONObject(aReader, (JSONObject jo) -> {System.out.println("Done");}, (Exception e) -> {/* something went wrong */});
+        System.out.println(result);
+        
+        assertTrue(result instanceof Future);
+	}
+	
+	
 
 }
