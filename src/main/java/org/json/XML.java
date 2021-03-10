@@ -52,9 +52,11 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
-
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 
@@ -909,6 +911,7 @@ public class XML {
      public static JSONObject addParser(JSONObject jsonObject, JSONObject resultCopy, Function<String, String> keyTransformer) {      	
       	Iterator<String> keys = jsonObject.keys();
 
+      	
       	while(keys.hasNext()) {
       	    String key = keys.next();
       	    if (jsonObject.get(key) instanceof JSONObject) {
@@ -947,10 +950,310 @@ public class XML {
 	
      }
 	
-	
-	
-	
+     
+     
+     //Milestone 4 check parsing
+     
+     
+     
+//     private static boolean parseForStreaming(XMLTokener x, JSONObject context, String name, XMLParserConfiguration config)
+//             throws JSONException {
+//         char c;
+//         int i;
+//         JSONObject jsonObject = null;
+//         String string;
+//         String tagName;
+//         Object token;
+//         XMLXsiTypeConverter<?> xmlXsiTypeConverter;
+//
+//         // Test for and skip past these forms:
+//         // <!-- ... -->
+//         // <! ... >
+//         // <![ ... ]]>
+//         // <? ... ?>
+//         // Report errors for these forms:
+//         // <>
+//         // <=
+//         // <<
+//
+//         token = x.nextToken();
+//
+//         // <!
+//
+//         if (token == BANG) {
+//             c = x.next();
+//             if (c == '-') {
+//                 if (x.next() == '-') {
+//                     x.skipPast("-->");
+//                     return false;
+//                 }
+//                 x.back();
+//             } else if (c == '[') {
+//                 token = x.nextToken();
+//                 if ("CDATA".equals(token)) {
+//                     if (x.next() == '[') {
+//                         string = x.nextCDATA();
+//                         if (string.length() > 0) {
+//                             context.accumulate(config.getcDataTagName(), string);
+//                         }
+//                         return false;
+//                     }
+//                 }
+//                 throw x.syntaxError("Expected 'CDATA['");
+//             }
+//             i = 1;
+//             do {
+//                 token = x.nextMeta();
+//                 if (token == null) {
+//                     throw x.syntaxError("Missing '>' after '<!'.");
+//                 } else if (token == LT) {
+//                     i += 1;
+//                 } else if (token == GT) {
+//                     i -= 1;
+//                 }
+//             } while (i > 0);
+//             return false;
+//         } else if (token == QUEST) {
+//
+//             // <?
+//             x.skipPast("?>");
+//             return false;
+//         } else if (token == SLASH) {
+//
+//             // Close tag </
+//
+//             token = x.nextToken();
+//             if (name == null) {
+//                 throw x.syntaxError("Mismatched close tag " + token);
+//             }
+//             if (!token.equals(name)) {
+//                 throw x.syntaxError("Mismatched " + name + " and " + token);
+//             }
+//             if (x.nextToken() != GT) {
+//                 throw x.syntaxError("Misshaped close tag");
+//             }
+//             return true;
+//
+//         } else if (token instanceof Character) {
+//             throw x.syntaxError("Misshaped tag");
+//
+//             // Open tag <
+//
+//         } else {
+//             tagName = (String) token;
+//             token = null;
+//             jsonObject = new JSONObject();
+//             boolean nilAttributeFound = false;
+//             xmlXsiTypeConverter = null;
+//             for (;;) {
+//                 if (token == null) {
+//                     token = x.nextToken();
+//                 }
+//                 // attribute = value
+//                 if (token instanceof String) {
+//                     string = (String) token;
+//                     token = x.nextToken();
+//
+//                     if (token == EQ) {
+//                         token = x.nextToken();
+//                         if (!(token instanceof String)) {
+//                             throw x.syntaxError("Missing value");
+//                         }
+//
+//                         if (config.isConvertNilAttributeToNull()
+//                                 && NULL_ATTR.equals(string)
+//                                 && Boolean.parseBoolean((String) token)) {
+//                             nilAttributeFound = true;
+//                         } else if (config.getXsiTypeMap() != null && !config.getXsiTypeMap().isEmpty()
+//                                 && TYPE_ATTR.equals(string)) {
+//                             xmlXsiTypeConverter = config.getXsiTypeMap().get(token);
+//                         } else if (!nilAttributeFound) {
+//                        	 //JSONObject what is string
+//                        	 
+//                        	 System.out.println("JSONObject " + jsonObject);
+//                        	 System.out.println("String " + string);
+//
+//                             jsonObject.accumulate(string,
+//                                     config.isKeepStrings()
+//                                             ? ((String) token)
+//                                             : stringToValue((String) token));
+//                         }
+//                         token = null;
+//                     } else {
+//                    	 System.out.println("JSONObject1 " + jsonObject);
+//                    	 System.out.println("String1 " + string);
+//                    	 
+//                         jsonObject.accumulate(string, "");
+//                     }
+//
+//
+//                 } else if (token == SLASH) {
+//                     // Empty tag <.../>
+//                     System.out.println("sadness");
+//
+//                	 
+//                     if (x.nextToken() != GT) {
+//                         throw x.syntaxError("Misshaped tag");
+//                     }
+//                     if (nilAttributeFound) {
+//                    	 System.out.println("JSONObject " + jsonObject);
+//                    	 System.out.println("Tagname " + tagName);
+//                         context.accumulate(tagName, JSONObject.NULL);
+//                     } else if (jsonObject.length() > 0) {
+//                    	 System.out.println("JSONObject1 " + jsonObject);
+//                    	 System.out.println("Tagname1 " + tagName);
+//                         context.accumulate(tagName, jsonObject);
+//                     } else {
+//                    	 System.out.println("JSONObject221 " + jsonObject);
+//                    	 System.out.println("Tagname222 " + tagName);
+//                         context.accumulate(tagName, "");
+//                     }
+//                     return false;
+//
+//                 } else if (token == GT) {
+//                     // Content, between <...> and </...>
+//                     System.out.println("Boss u good or no?");
+//
+//                     for (;;) {
+//                         token = x.nextContent();
+//                         if (token == null) {
+//                             if (tagName != null) {
+//                                 throw x.syntaxError("Unclosed tag " + tagName);
+//                             }
+//                             return false;
+//                         } else if (token instanceof String) {
+//                             string = (String) token;
+//                             System.out.println("String " + string);
+//                             if (string.length() > 0) {
+//                                 if (xmlXsiTypeConverter != null) {
+//                                	 System.out.println("String1 " + config.getcDataTagName());
+//                                     jsonObject.accumulate(config.getcDataTagName(),
+//                                             stringToValue(string, xmlXsiTypeConverter));
+//                                 } else {
+//                                	 System.out.println("String2 " + config.getcDataTagName());
+//
+//                                     jsonObject.accumulate(config.getcDataTagName(),
+//                                             config.isKeepStrings() ? string : stringToValue(string));
+//                                 }
+//                             }
+//
+//                         } else if (token == LT) {
+//                             // Nested element
+//                             System.out.println("New nested obj with key " + tagName);
+//                        	 System.out.println("JSONObject " + jsonObject);
+//                             System.out.println();
+//
+//                             
+//                             if (parseForStreaming(x, jsonObject, tagName, config)) {
+//                                 if (jsonObject.length() == 0) {
+//                                     context.accumulate(tagName, "");
+//                                 } else if (jsonObject.length() == 1
+//                                         && jsonObject.opt(config.getcDataTagName()) != null) {
+//                                	 System.out.println("JSONObject1 " + jsonObject);
+//                                	 System.out.println("Tagname1 " + tagName);
+//                                     context.accumulate(tagName, jsonObject.opt(config.getcDataTagName()));
+//                                 } else {
+//                                	 System.out.println("JSONObject2 " + jsonObject);
+//                                	 System.out.println("Tagname2 " + tagName);
+//                                     context.accumulate(tagName, jsonObject);
+//                                 }
+//                                 return false;
+//                             }
+//                        	 System.out.println("Ok man");
+//                             
+//                         }
+//                     }
+//                 } else {
+//                     throw x.syntaxError("Misshaped tag");
+//                 }
+//             }
+//         }
+//     }
+//     
+//     
+     
+     
+//     
+//     
+//
+//     public static JSONObject toJSONObject1(Reader reader, String k) throws IOException {
+//     	
+//    	//JSONObject jsonObject1 = xmltoJson(reader);
+//    	
+//    	//JSONObject resultCopy = new JSONObject();
+//    	//JSONObject resultObj = addParser(jsonObject1, resultCopy, keyTransformer);
+// 	   	System.out.println("books result in function ");
+//
+//        JSONObject jo = new JSONObject();
+//        XMLTokener x = new XMLTokener(reader);
+//        while (x.more()) {
+//            x.skipPast("<");
+//            if(x.more()) {
+//                parseForStreaming(x, jo, null, XMLParserConfiguration.ORIGINAL);
+//            }
+//        }
+//        return jo;
+//    	
+//    	
+//    	
+//    	//return resultObj;
+//	
+//     }
+//	
+     
+//     ExecutorService service = Executors.newFixedThreadPool(5);
+//     Future<JSONObject> future = service.submit(new Task(reader));
+//
+//     JSONObject result;
+//     try {
+//         result = future.get();
+//     } catch (InterruptedException | ExecutionException e) {
+//         exception.accept(e);
+//         return;
+//     }
+//     consumer.accept(result);
+// }
+     
+     
+     
+     
+     //Milestone 5
+ 	//XML.toJSONObject(aReader, (JSONObject jo) -> {jo.write(aWriter);}, (Exception e) -> {/* something went wrong */});
 
+     public static Future<JSONObject> toJSONObject(Reader reader, Consumer<JSONObject> func, Consumer<Exception> e)  {
+    	 //A function that returns a future or a promise while the actual XML file is being parsed into a JSON Object
+    	 Future<JSONObject> future = new ReaderXML().read(reader);
+    	 Object result = null;
+    	 
+    	 try {
+        	 while(!future.isDone()) {
+     		    System.out.println("Running...");
+     		    Thread.sleep(300);
+     		    result = future.get();
+     		    System.out.println("Getting the result from using Future: " + result);
+     		}    		 
+    	 } catch(Exception err) {
+    		 System.out.println(err);
+    	 }
+
+    	 
+    	 return future;
+    	 
+     }
+     
+     public static class ReaderXML {    
+    	    // A class that runs the reader using the Executor service to return a promise
+    	    private ExecutorService executor 
+    	      = Executors.newSingleThreadExecutor();
+    	    
+    	    public Future<JSONObject> read(Reader reader) {        
+    	        return executor.submit(() -> {
+    	            Thread.sleep(1000);
+    	            return toJSONObject(reader);
+    	        });
+    	    }
+    	    
+    	}
 	
 	
 
