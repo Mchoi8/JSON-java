@@ -1220,7 +1220,7 @@ public class XML {
      //Milestone 5
  	//XML.toJSONObject(aReader, (JSONObject jo) -> {jo.write(aWriter);}, (Exception e) -> {/* something went wrong */});
 
-     public static Future<JSONObject> toJSONObject(Reader reader, Consumer<JSONObject> func, Consumer<Exception> e)  {
+     public static Future<JSONObject> toJSONObject(Reader reader, Consumer<Exception> e)  {
     	 //A function that returns a future or a promise while the actual XML file is being parsed into a JSON Object
     	 Future<JSONObject> future = new ReaderXML().read(reader);
     	 Object result = null;
